@@ -1,0 +1,1 @@
+{load child1.tpl} {load child1.tpl}!

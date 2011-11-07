@@ -1,0 +1,1 @@
+Hello {load child.tpl}!
