@@ -74,7 +74,7 @@ class Dummy
     {
         
         // The variable name to replace
-        $variableName = '%' . $name . '%';
+        $variableName = '{' . $name . '}';
 
         // Replace the variable in each template
         foreach ($this->templates as $key => $template) {
