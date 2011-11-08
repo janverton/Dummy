@@ -14,19 +14,19 @@ Usage
 Let's say you've created a cutting edge template named demo.tpl which looks
 like this:
 
-<h1>Hello {name}!</h1>
+> <h1>Hello {name}!</h1>
 
 You will be able to use it like this
 
-<?php
-
-// Create a Dummy instance
-include 'Dummy.php';
-$dummy = new Dummy;
-
-// Get the template and replace the name variable with 'World'
-$dummy->getTemplate('demo.tpl');
-$this->dummy->replace('name', 'World');
-
-// Display the contents
-echo $dummy->getTemplate('demo.tpl');
+> <?php
+>
+> // Create a Dummy instance
+> include 'Dummy.php';
+> $dummy = new Dummy;
+>
+> // Get the template and replace the name variable with 'World'
+> $dummy->getTemplate('demo.tpl');
+> $this->dummy->replace('name', 'World');
+> 
+> // Display the contents
+> echo $dummy->getTemplate('demo.tpl');
