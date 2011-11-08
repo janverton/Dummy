@@ -48,8 +48,10 @@ class Dummy
         if (!array_key_exists($filename, $this->templates)) {
             $this->templates[$filename] = $this->loadTemplate($filename);
 
-            // Get any nested templates
-            $this->loadNestedTemplates($filename);
+            // Get any nested templates while available
+            do {
+                $hasNestedTemplates = $this->loadNestedTemplates($filename); 
+            } while ($hasNestedTemplates);
         }
 
         // Return the template
@@ -72,7 +74,7 @@ class Dummy
      */
     public function replace($name, $value)
     {
-        
+
         // The variable name to replace
         $variableName = '{' . $name . '}';
 
@@ -84,6 +86,7 @@ class Dummy
 
             // And save the new template content
             $this->templates[$key] = $newTemplate;
+            
         }
 
         return true;
@@ -97,6 +100,7 @@ class Dummy
      * 
      * @return string
      * 
+     * @throws Exception
      * @access protected
      */
     protected function loadTemplate($filename)
@@ -117,9 +121,11 @@ class Dummy
      * 
      * @param string $filename The template to check for nested templates
      * 
-     * @todo All templates should be in the same directory
+     * @todo All templates are loaded from the current directory, a custom 
+     * configurable template directory would be nicer.
      * 
-     * @return void
+     * @return boolean Returns true when a nested template is loade or false 
+     *   otherwise
      * 
      * @access protected
      */
@@ -133,7 +139,9 @@ class Dummy
         );
 
         // Return when no match is found
-        if (0 === count($matches[0])) return;
+        if (0 === count($matches[0])) {
+            return false;
+        }
 
         // Loop through the nested templates
         $templates = $matches[0];
@@ -141,6 +149,9 @@ class Dummy
         foreach ($templates as $match) {
             $this->replaceTemplateMatches($match, $filename);
         }
+
+        // Nested templates loaded, return true
+        return true;
 
     }
 
