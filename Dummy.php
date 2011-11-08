@@ -7,8 +7,8 @@
  * @category Dummy
  * @package  Dummy
  * @author   Jan Verton <janverton@gmail.com>
- * @license  The MIT Licens
- * @link     http://github.com/Dummy
+ * @license  The MIT License
+ * @link     http://github.com/janverton/Dummy
  */
 class Dummy
 {
