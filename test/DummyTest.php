@@ -49,7 +49,7 @@ class DummyTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Exception');
 
         // Load the not existing template
-        $this->dummy->getTemplate('bla.tpl');
+        $this->dummy->parseTemplate('bla.tpl');
 
     }
 
@@ -60,7 +60,7 @@ class DummyTest extends PHPUnit_Framework_TestCase
     {
 
         // Get the template
-        $this->dummy->getTemplate('replaceVar.tpl');
+        $this->dummy->parseTemplate('replaceVar.tpl');
 
         // Replace the value
         $this->dummy->replace('name', 'World');
@@ -140,4 +140,55 @@ class DummyTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * Test a loop 
+     */
+    public function testLoop()
+    {
+
+        // Get a template with a loop
+        $this->dummy->parseTemplate('loop.tpl');
+
+        // Create an array with stdClass objects with a name and age property 
+        // assigned
+        $vocals = new stdClass;
+        $vocals->name = 'Freddie';
+        $vocals->age = 65;
+
+        $guitars = new stdClass;
+        $guitars->name = 'Brian';
+        $guitars->age = 66;
+        
+        // Add the objects to a data array
+        $data = array($vocals, $guitars);
+
+        // Now assign data to the loop
+        $this->dummy->assignLoop('artists', $data);
+
+        // Check if the template and loop have been rendered well
+        $content = $this->dummy->getTemplate('loop.tpl');
+        $this->assertEquals(
+            'Name: Freddie (65) Name: Brian (66) ', $content, 
+            'Loop did not parse succesfully'
+        );
+
+    }
+    
+    /**
+     * Test a not existing loop 
+     */
+    public function testNotExistingLoop()
+    {
+        
+        // Get a template with a loop
+        $this->dummy->parseTemplate('loop.tpl');
+        
+        // Now assign data to a not existing loop
+        $this->assertFalse(
+            $this->dummy->assignLoop('foo', array()),
+            'Loop found while it does not exist'
+        );
+        
+    }
+    
 }

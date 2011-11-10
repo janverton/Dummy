@@ -1,0 +1,1 @@
+{loop artists}Name: {:name} ({:age}) {/loop}
