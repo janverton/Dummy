@@ -25,7 +25,7 @@ You will be able to use it like this
 > $dummy = new Dummy;   
 >
 > // Get the template and replace the name variable with 'World'   
-> $dummy->getTemplate('demo.tpl');   
+> $dummy->parseTemplate('demo.tpl');   
 > $this->dummy->replace('name', 'World');   
 > 
 > // Display the contents   
