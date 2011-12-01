@@ -71,11 +71,11 @@ class Dummy
      * Define a custom template directory. Any template parsed after this call
      * will be retrieved from the given directory.
      * 
-     * @example $dummy->setTemplateDirectory('demo');
-     *   -> will look for templates in the demo dir located in the root of the
+     * @param String $directoryName The directory relative to the root of the
      *   Dummy project
      * 
-     * @param String $directoryName The directory relative to the root of the
+     * @example $dummy->setTemplateDirectory('demo');
+     *   -> will look for templates in the demo dir located in the root of the
      *   Dummy project
      * 
      * @return Return true on success
@@ -92,7 +92,7 @@ class Dummy
         
         // Make sure it exists
         if (!$directory) {
-            throw new \Exception (
+            throw new \Exception(
                 'Template dir ' . $directoryName . ' does not exist'
             );
         }
