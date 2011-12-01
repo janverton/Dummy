@@ -1,5 +1,8 @@
 <?php
 
+// Define the namespace
+namespace SDT;
+
 /**
  * This class acts as a template engine, somewhat like the Smarty framework,
  * but much more lightweight.
@@ -57,6 +60,50 @@ class Dummy
      * @access protected
      */
     protected $loops = null;
+    
+    /**
+     * The current template dir
+     * @var String
+     */
+    protected $templateDirectory = '';
+    
+    /**
+     * Define a custom template directory. Any template parsed after this call
+     * will be retrieved from the given directory.
+     * 
+     * @example $dummy->setTemplateDirectory('demo');
+     *   -> will look for templates in the demo dir located in the root of the
+     *   Dummy project
+     * 
+     * @param String $directoryName The directory relative to the root of the
+     *   Dummy project
+     * 
+     * @return Return true on success
+     * 
+     * @throws Exception
+     * @access public
+     */
+    public function setTemplateDirectory($directoryName)
+    {
+        
+        // Retrieve the directory
+        $directoryName = __DIR__ . DIRECTORY_SEPARATOR . $directoryName;
+        echo $directory = realpath($directoryName);
+        
+        // Make sure it exists
+        if (!$directory) {
+            throw new \Exception (
+                'Template dir ' . $directoryName . ' does not exist'
+            );
+        }
+        
+        // Set the template directory
+        $this->templateDirectory = $directory . DIRECTORY_SEPARATOR;
+        
+        // Return
+        return true;
+
+    }
     
     /**
      * Parse the given template. This means nested templates will be included 
@@ -200,12 +247,15 @@ class Dummy
     {
 
         // Raise an exception when the file can not be found
-        if (!file_exists($filename)) {
-            throw new Exception('Template does not exist: ' . $filename);
+        if (!file_exists($this->templateDirectory . $filename)) {
+            throw new \Exception(
+                'Template does not exist: ' . $this->templateDirectory . 
+                $filename
+            );
         }
 
         // Return the contents of the template
-        return file_get_contents($filename);
+        return file_get_contents($this->templateDirectory . $filename);
 
     }
 

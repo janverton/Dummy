@@ -12,7 +12,7 @@ class DummyTest extends PHPUnit_Framework_TestCase
     /**
      * A Dummy instance.
      * 
-     * @var Dummy
+     * @var \STD\Dummy
      */
     protected $dummy;
 
@@ -21,7 +21,9 @@ class DummyTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->dummy = new Dummy;
+        
+        // Create a new dummy instance
+        $this->dummy = new \SDT\Dummy;
 
     }
 
@@ -45,7 +47,7 @@ class DummyTest extends PHPUnit_Framework_TestCase
     public function testGetNotExistingTemplate()
     {
 
-        // An error should be thrown
+        // An exception should be thrown
         $this->setExpectedException('Exception');
 
         // Load the not existing template
@@ -187,6 +189,54 @@ class DummyTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(
             $this->dummy->assignLoop('foo', array()),
             'Loop found while it does not exist'
+        );
+        
+    }
+    
+    /**
+     * A custom template directory can be set
+     */
+    public function testSetTemplateDirectory()
+    {
+        
+        // Set a custom template directory
+        $this->assertTrue(
+            $this->dummy->setTemplateDirectory('test/subdir'),
+            'Template directory could not be set'
+        );
+        
+    }
+    
+    /**
+     * An invalid template directory raises an exception
+     */
+    public function testSetInvalidTemplateDirectory()
+    {
+        
+        // An exception should be thrown
+        $this->setExpectedException('Exception');
+        
+        // Boom does not exist
+        $this->dummy->setTemplateDirectory('boom');
+        
+    }
+    
+    /**
+     * Retrieve a template from a set template directory
+     */
+    public function testGetTemplateFromTemplateDirectory()
+    {
+        
+        // Set a custom template directory
+        $this->assertTrue(
+            $this->dummy->setTemplateDirectory('test/subdir'),
+            'Template directory could not be set'
+        );
+        
+        // Make sure something is returned
+        $this->assertNotNull(
+            $this->dummy->getTemplate('setTemplateDir.tpl'), 
+            'Template could not be retrieved'
         );
         
     }
