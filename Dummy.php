@@ -88,7 +88,7 @@ class Dummy
         
         // Retrieve the directory
         $directoryName = __DIR__ . DIRECTORY_SEPARATOR . $directoryName;
-        echo $directory = realpath($directoryName);
+        $directory = realpath($directoryName);
         
         // Make sure it exists
         if (!$directory) {
