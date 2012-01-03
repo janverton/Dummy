@@ -21,7 +21,7 @@ class Dummy
      * 
      * @access public
      */
-    const TEMPLATE_PATTERN = '/{load [a-zA-Z0-9_]+\.tpl}/';
+    const TEMPLATE_PATTERN = '/{load [a-zA-Z0-9_.\/]+\.tpl}/';
 
     /**
      * Pattern where looping is matched against
@@ -314,10 +314,13 @@ class Dummy
 
         // Get the template path
         $nestedTemplate = substr($match, 6, -1);
-
+        
         // Load the nested template
         $nestedTemplate = $this->loadTemplate($nestedTemplate);
 
+        // Make sure path delimiters are escaped
+        $match = str_replace('/', '\/', $match);
+        
         // And replace the nested template
         $this->templates[$filename] = preg_replace(
             '/' . $match . '/', $nestedTemplate, $this->templates[$filename]

@@ -241,4 +241,45 @@ class DummyTest extends PHPUnit_Framework_TestCase
         
     }
     
+    /**
+     * Retrieve a template from relative to the set template directory
+     */
+    public function testGetTemplateFromRelativeDirectory()
+    {
+        
+        // Set a custom template directory
+        $this->assertTrue(
+            $this->dummy->setTemplateDirectory('test/subdir'),
+            'Template directory could not be set'
+        );
+        
+        // Make sure something is returned
+        $this->assertNotNull(
+            $this->dummy->getTemplate('../child.tpl'), 
+            'Template could not be retrieved'
+        );
+        
+    }
+    
+    /**
+     * Retrieve a relative template from the set template directory
+     */
+    public function testRelativeNestedTemplate()
+    {
+        
+        // Set a custom template directory
+        $this->assertTrue(
+            $this->dummy->setTemplateDirectory('test/subdir'),
+            'Template directory could not be set'
+        );
+        
+        // Make sure something is returned
+        $this->assertEquals(
+            'Mother',
+            $this->dummy->getTemplate('relativeTemplate.tpl'), 
+            'Template did not parse correct'
+        );
+        
+    }
+    
 }
