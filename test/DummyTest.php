@@ -161,8 +161,8 @@ class DummyTest extends PHPUnit_Framework_TestCase
         $guitars->name = 'Brian';
         $guitars->age = 66;
         
-        // Add the objects to a data array
-        $data = array($vocals, $guitars);
+        // Add the objects to an Array Iterator
+        $data = new ArrayIterator(array($vocals, $guitars));
 
         // Now assign data to the loop
         $this->dummy->assignLoop('artists', $data);
@@ -171,6 +171,37 @@ class DummyTest extends PHPUnit_Framework_TestCase
         $content = $this->dummy->getTemplate('loop.tpl');
         $this->assertEquals(
             'Name: Freddie (65) Name: Brian (66) ', $content, 
+            'Loop did not parse succesfully'
+        );
+
+    }
+    
+    /**
+     * Test an incomplete loop 
+     */
+    public function testLoopWithIncompleteObject()
+    {
+
+        // Get a template with a loop
+        $this->dummy->parseTemplate('loop.tpl');
+
+        // Create astdClass object with a name and gender property assigned
+        // (name and age are expected to be set)
+        $bass = new stdClass;
+        $bass->name   = 'John';
+        $bass->gender = 'male';
+        
+        // Add the object to an Array Iterator
+        $data = new ArrayIterator(array($bass));
+
+        // Now assign data to the loop
+        $this->dummy->assignLoop('artists', $data);
+
+        // Check if the template and loop have been rendered well (the {:age} 
+        // tag should be removed, name should be set)
+        $content = $this->dummy->getTemplate('loop.tpl');
+        $this->assertEquals(
+            'Name: John () ', $content, 
             'Loop did not parse succesfully'
         );
 
@@ -187,7 +218,7 @@ class DummyTest extends PHPUnit_Framework_TestCase
         
         // Now assign data to a not existing loop
         $this->assertFalse(
-            $this->dummy->assignLoop('foo', array()),
+            $this->dummy->assignLoop('foo', new ArrayIterator()),
             'Loop found while it does not exist'
         );
         

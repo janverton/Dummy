@@ -1,14 +1,26 @@
 <?php
 
-// Define the namespace
+/**
+ * SDT Templating engine
+ * 
+ * PHP version 5
+ * 
+ * @category Dummy
+ * @package  SDT
+ * @author   Jan Verton <janverton@gmail.com>
+ * @license  The MIT License
+ * @link     http://github.com/janverton/Dummy
+ */
+
+// Define SDT namespace
 namespace SDT;
 
 /**
  * This class acts as a template engine, somewhat like the Smarty framework,
- * but much more lightweight.
+ * but much more lightweight
  * 
  * @category Dummy
- * @package  Dummy
+ * @package  SDT
  * @author   Jan Verton <janverton@gmail.com>
  * @license  The MIT License
  * @link     http://github.com/janverton/Dummy
@@ -63,7 +75,9 @@ class Dummy
     
     /**
      * The current template dir
+     * 
      * @var String
+     * @access protected
      */
     protected $templateDirectory = '';
     
@@ -80,7 +94,7 @@ class Dummy
      * 
      * @return Return true on success
      * 
-     * @throws Exception
+     * @throws \Exception
      * @access public
      */
     public function setTemplateDirectory($directoryName)
@@ -166,7 +180,7 @@ class Dummy
     }
 
     /**
-     * Replace a variable with the given value
+     * Replace a variable for the given value
      * 
      * @param string $name  Name of the variable to replace
      * @param string $value The value to display
@@ -195,19 +209,19 @@ class Dummy
     }
     
     /**
-     * Replace a loop with the given data set. This needs to be an array 
-     * containing objects of type stdClass
+     * Replace a loop with the given Iterator. This needs to be an Iterator of 
+     * some sort containing objects of type stdClass
      * 
-     * @param String $loopName Name of the loop to use
-     * @param array  $data     Data to populate
+     * @param String    $loopName Name of the loop to use
+     * @param \Iterator $iterator Iterator to populate
      * 
-     * @example assignLoop('foo', array(stdClass))
+     * @example assignLoop('foo', new ArrayIterator(array(stdClass)))
      * 
      * @return boolean
      * 
      * @access public 
      */
-    public function assignLoop($loopName, array $data)
+    public function assignLoop($loopName, \Iterator $iterator)
     {
         
         // Get the available loops
@@ -221,8 +235,8 @@ class Dummy
         // Get the content pattern of the loop
         $loopContentPattern = $this->getLoopContentPattern($loops[$loopName]);
         
-        // Parse the loop with the given data set
-        $parsedContent = $this->parseLoop($loopContentPattern, $data);
+        // Parse the loop with the given iterator
+        $parsedContent = $this->parseLoop($loopContentPattern, $iterator);
         
         // Replace loop patern with the parsed loop content
         $this->parsedTemplate = str_replace(
@@ -231,6 +245,7 @@ class Dummy
         
         // When we've come this far all should be okay
         return true;
+        
     }
     
     /**
@@ -240,7 +255,7 @@ class Dummy
      * 
      * @return String
      * 
-     * @throws Exception
+     * @throws \Exception
      * @access protected
      */
     protected function loadTemplate($filename)
@@ -463,53 +478,54 @@ class Dummy
      * Populate a loop with the given data set. This needs to be an array 
      * containing objects of type stdClass
      * 
-     * @param String $loopPattern The pattern to parse
-     * @param array  $data        Data to populate the pattern with
+     * @param String    $loopPattern The pattern to parse
+     * @param \Iterator $iterator    Iterator to populate the pattern with
      * 
      * @example $object = new stdClass; 
      *   $object->foo = 'bar';
-     *   parseLoop('bar{:foo}baz', array($object));
+     *   parseLoop('bar{:foo}baz', new ArrayIterator(array($object)));
      *   => 'barbarbaz'
      * 
      * @return String The parsed content
      * 
      * @access protected
      */
-    protected function parseLoop($loopPattern, array $data)
+    protected function parseLoop($loopPattern, \Iterator $iterator)
     {
         
-        // Extract the var names from the loop content
-        $objectVars = $this->getVariableNamesFromLoop($loopPattern);
+        // Extract the variable names from the loop content
+        $objectVariables = $this->getVariableNamesFromLoop($loopPattern);
         
-        // Get the size of the dataset
-        $numberOfLoops = count($data);
-        
-        // Replace the data for each loop and add it to the parsed content
+        // Define parsed content
         $parsedContent = '';
-        for ($i = 0; $i < $numberOfLoops; $i++) {
+        
+        // Iterate through the available data objects
+        foreach ($iterator as $dataObject) {
             
-            // Get a clean loop content pattern
+            // Clear parsed loop content pattern
             $parsedLoopContent = $loopPattern;
             
             // Replace all variables for this loop with the right content
-            foreach ($objectVars as $varName) {
+            foreach ($objectVariables as $property) {
                 
-                // When the object does not have a property skip the replacement
-                if (!property_exists($data[$i], $varName)) {
-                    continue;
+                // When the requested property is not set add the property being
+                // empty
+                if (!property_exists($dataObject, $property)) {
+                    $dataObject->$property = '';
                 }
                 
                 // Replace the template variable with the according property
                 // of the current object
                 $parsedLoopContent = str_replace(
-                    '{:' . $varName . '}',
-                    $data[$i]->$varName, 
+                    '{:' . $property . '}',
+                    $dataObject->$property,
                     $parsedLoopContent
                 );
             }
             
             // Add the created loop to the parsed content
             $parsedContent .= $parsedLoopContent;
+        
         }
         
         // Return the created content
